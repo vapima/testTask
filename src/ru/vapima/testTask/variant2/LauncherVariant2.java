@@ -9,15 +9,12 @@ import static ru.vapima.testTask.Main.THREADS;
 import static ru.vapima.testTask.Validation.valid;
 
 public class LauncherVariant2 {
-    private static volatile Integer integer = 1;
-
     public static void main() throws InterruptedException {
-        CounterLines counterLines = new CounterLines();
-        AtomicInteger atomicInteger = new AtomicInteger(100);
+        AtomicInteger linesCounterInOriginalFile = new AtomicInteger(1); //счетчик строк для всех потоков
         ExecutorService executorService = Executors.newFixedThreadPool(THREADS);
         int countThreads = THREADS;
         while (countThreads > 0) {
-            executorService.execute(new LinesGrabber("n" + countThreads, counterLines));
+            executorService.execute(new LinesGrabber("n" + countThreads, linesCounterInOriginalFile));
             countThreads--;
         }
         executorService.shutdown();

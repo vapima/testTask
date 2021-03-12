@@ -1,21 +1,22 @@
 package ru.vapima.testTask.variant2;
 
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static ru.vapima.testTask.Main.CSV_ORIGINAL;
 import static ru.vapima.testTask.Main.PATH;
 
 /**
  * @author Vasily Pima
- * Producer
+ * Поток который заюирает строчку из общего файла, и сохраняет в совй файл.
  */
 public class LinesGrabber implements Runnable {
     private final String name;
-    private final CounterLines counterLines; //Счетчик строк пройденых всеми потоками
+    private final AtomicInteger linesCounterInOriginalFile;
 
-    public LinesGrabber(String name, CounterLines counterLines) {
+    public LinesGrabber(String name, AtomicInteger linesCounterInOriginalFile) {
         this.name = name;
-        this.counterLines = counterLines;
+        this.linesCounterInOriginalFile = linesCounterInOriginalFile;
     }
 
 
@@ -30,17 +31,14 @@ public class LinesGrabber implements Runnable {
                              (new FileOutputStream
                                      (PATH + name + ".csv"), "Cp1251"))) {
             String line;
-            Integer insideCounter = 0; //Счетчик строк пройденых отдельным потоком
-            while ((line = fp.readLine()) != null) { //Берем строчку
-                synchronized (counterLines) {  //не даем изменять счетчики и записывать другим потокам
-                    if (counterLines.getCount().equals(insideCounter)) { //проверяем добежали ли мы до еще не стыреной строчки
-                        counterLines.inc(); //инкрементим общий счетчик, давац понять остальным потокам что мы забрали эту строку
-                        pw.write(line + "\r\n"); //записываем в свой файл строчку
-                    }
+            Integer insideCounter = 0; //Счетчик строк пройденых отдельным(текущим) потоком
+            Integer availableCount = linesCounterInOriginalFile.getAndIncrement(); //получаем доступный номер строки для изменения
+            while ((line = fp.readLine()) != null) { //Бежим по строчкам в файле
+                if (insideCounter.equals(availableCount)) { //если номер строки равен номеру строки доступной для изменения
+                    pw.write(line + "\r\n"); //записываем в свой файл эту строчку
+                    availableCount = linesCounterInOriginalFile.getAndIncrement(); //получаем новый доступный номер
                 }
-
                 insideCounter++;
-
             }
             System.out.println(name + ": STOPPED");
         } catch (FileNotFoundException e) {
