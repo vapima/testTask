@@ -1,4 +1,4 @@
-package ru.vapima.testTask;
+package ru.vapima.testTask.variant1;
 
 import java.io.*;
 import java.util.concurrent.BlockingQueue;
@@ -22,6 +22,7 @@ public class CsvWriter implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(name + ": START");
         try (PrintWriter pw = new PrintWriter
                 (new OutputStreamWriter
                         (new FileOutputStream
@@ -34,7 +35,6 @@ public class CsvWriter implements Runnable {
                     return; //Данных у производителя больше нет, сворачиваем лавочку.
                 }
                 pw.write(take + "\r\n");
-                System.out.println(name + ": " + take);
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found.");

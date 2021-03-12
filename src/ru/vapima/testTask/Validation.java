@@ -61,7 +61,7 @@ public class Validation {
                 }
                 //Если значение изменено, значит такая строчка уже где то была и добавлена в мапу. Дубликат.
                 else if (!putAnswer.equals("ok")) {
-                    throw new RuntimeException("Validation false. Duplicate found. "+"Duplicated: " + line);
+                    throw new RuntimeException("Validation false. Duplicate found. " + "Duplicated: " + line);
                 }
                 countOfLinesInOutputFile++;
             }

@@ -1,4 +1,4 @@
-package ru.vapima.testTask;
+package ru.vapima.testTask.variant1;
 
 import java.io.*;
 import java.util.concurrent.BlockingQueue;
@@ -20,6 +20,7 @@ public class CsvReader implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(name + ": START");
         try (BufferedReader fp = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(PATH + CSV_ORIGINAL), "Cp1251"))) {
