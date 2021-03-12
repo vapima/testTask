@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static ru.vapima.testTask.Main.THREADS;
 import static ru.vapima.testTask.Validation.valid;
 
-public class Launcher {
+public class LauncherVariant2 {
     private static volatile Integer integer = 1;
 
     public static void main() throws InterruptedException {
